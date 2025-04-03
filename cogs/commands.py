@@ -16,7 +16,8 @@ class CommandsCog(commands.Cog):
                     inter: disnake.ApplicationCommandInteraction,
                     message: str = commands.Param(description="Enter a message to send")):
 
-        await inter.response.send_message(message)
+        await inter.response.defer()
+        await inter.followup.sen(message)
 
     @commands.slash_command(name='reload_cogs', description='Перезапустити всі slashcommands та events')
     @commands.has_permissions(administrator=True)
