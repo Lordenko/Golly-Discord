@@ -17,7 +17,7 @@ class CommandsCog(commands.Cog):
                     message: str = commands.Param(description="Enter a message to send")):
 
         await inter.response.defer()
-        await inter.followup.sen(message)
+        await inter.followup.send(message)
 
     @commands.slash_command(name='reload_cogs', description='Перезапустити всі slashcommands та events')
     @commands.has_permissions(administrator=True)
