@@ -17,7 +17,9 @@ class EventsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        await member.add_roles(1355333551880409200)
+        guild = member.guild
+        role = guild.get_role(1355333551880409200)
+        await member.add_roles(role)
 
 
 def setup(bot):
