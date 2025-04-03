@@ -16,8 +16,9 @@ class CommandsCog(commands.Cog):
                     inter: disnake.ApplicationCommandInteraction,
                     message: str = commands.Param(description="Enter a message to send")):
 
-        channel_id = inter.channel_id
-        await self.bot.send_message(channel_id, message)
+        channel = self.bot.get_channel(inter.channel_id)
+        await channel.send(message)
+        await inter.response.send_message('Message sent!', ephemeral=True)
 
     @commands.slash_command(name='reload_cogs', description='Перезапустити всі slashcommands та events')
     @commands.has_permissions(administrator=True)
