@@ -20,6 +20,7 @@ class CommandsCog(commands.Cog):
 
         channel = self.bot.get_channel(inter.channel_id)
         await channel.send(message)
+        await asyncio.sleep(1)
         await inter.response.send_message('Message sent!', ephemeral=True)
         await asyncio.sleep(3)
         await inter.delete_original_response()
