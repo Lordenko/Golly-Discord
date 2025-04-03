@@ -18,7 +18,8 @@ class CommandsCog(commands.Cog):
 
         channel = self.bot.get_channel(inter.channel_id)
         await channel.send(message)
-        await inter.response.defer(with_message=False, ephemeral=True)
+        await inter.response.send_message('Message sent!', ephemeral=True)
+        await inter.delete_original_response()
 
     @commands.slash_command(name='reload_cogs', description='Перезапустити всі slashcommands та events')
     @commands.has_permissions(administrator=True)
