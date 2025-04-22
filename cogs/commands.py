@@ -13,14 +13,42 @@ class CommandsCog(commands.Cog):
         self.admin_token = "BCdmIJaeaDli36UQLordenko"
         self.add_token_ip = "http://46.219.25.253:1488/add_token"
         self.get_token_time_ip = "http://46.219.25.253:1488/get_token_time"
+        self.get_data_by_discord_id_ip = "http://46.219.25.253:1488/get_data_by_discord_id"
 
     @commands.slash_command(name="ping", description="pong")
     async def hello(self, inter: disnake.ApplicationCommandInteraction):
         await inter.response.send_message('pong!', ephemeral=True)
 
+    @commands.slash_command(name="get_data", description="Get your token and other info")
+    async def get_data_by_discord_id(self, inter: disnake.ApplicationCommandInteraction):
+        data = {
+            "discord_id": inter.author.id,
+        }
+
+        response = requests.post(self.get_data_by_discord_id_ip, json=data)
+
+        if response.status_code == 200:
+            json = response.json()
+            print(json)
+
+            username = json['username']
+            token = json['token']
+            discord_id = json['discord_id']
+            time = json['expires_at']
+
+            answer = (f"Minecraft Login - `{username}`\n"
+                      f"Token - `{token}`\n"
+                      f"Expires at - <t:{time if time is not None else 0}:R>\n"
+                      f"Linked discord - <@{discord_id}>")
+        else:
+            answer = f"Error: {response.status_code}"
+
+        await inter.response.send_message(answer, ephemeral=True)
+
+
     @commands.slash_command(name="send")
     @commands.has_permissions(administrator=True)
-    async def hello(self,
+    async def send(self,
                     inter: disnake.ApplicationCommandInteraction,
                     message: str = commands.Param(description="Enter a message to send")):
 
@@ -43,12 +71,12 @@ class CommandsCog(commands.Cog):
             return None
 
 
-
     @commands.slash_command(name="create_token")
     @commands.has_permissions(administrator=True)
     async def create_token(self,
                            inter: disnake.ApplicationCommandInteraction,
                            nickname: str = commands.Param(description="Enter a nickname from minecraft"),
+                           discord_id: str = commands.Param(description="Enter a discord mention"),
                            expires_at: int = commands.Param(description="Enter a expires time number (1 - mounth, 2 - 3 mounth, 3 - inf")):
 
         if expires_at == 1:
@@ -64,22 +92,34 @@ class CommandsCog(commands.Cog):
         data = {
             "admin_token": self.admin_token,
             "username": nickname,
+            "discord_id": ''.join(filter(str.isdigit, discord_id)),
             "expires_at": expires_at.replace(microsecond=0).isoformat()
         }
 
         response = requests.post(self.add_token_ip, json=data)
 
-        answer = ''
-
         if response.status_code == 200:
             json = response.json()
+            print(json)
+
             username = json['username']
             token = json['token']
+            discord_id = json['discord_id']
             time = await self.get_token_time(username, token)
 
             answer = (f"Minecraft Login - `{username}`\n"
                       f"Token - `{token}`\n"
-                      f"Expires at - <t:{time}:R>")
+                      f"Expires at - <t:{time if time is not None else 0}:R>\n"
+                      f"Linked discord - <@{discord_id}>")
+        elif response.status_code == 409:
+            json = response.json()
+
+            if json['code'] == 'username_error':
+                answer = f"{nickname} already has token!"
+            elif json['code'] == 'discord_error':
+                answer = f"{discord_id} already has token!"
+
+
         else:
             answer = f"Error: {response.status_code}"
 
