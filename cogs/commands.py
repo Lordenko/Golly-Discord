@@ -29,6 +29,21 @@ class CommandsCog(commands.Cog):
         await inter.response.send_message('eblan', ephemeral=True)
         await inter.delete_original_response()
 
+    async def get_token_time(self, nickname: str, token: str):
+        data = {
+            "username": nickname,
+            "token": token
+        }
+
+        response = requests.post(self.get_token_time_ip, json=data)
+
+        if response.status_code == 200:
+            return response.json()['expires_at']
+        else:
+            return None
+
+
+
     @commands.slash_command(name="create_token")
     @commands.has_permissions(administrator=True)
     async def create_token(self,
@@ -58,9 +73,13 @@ class CommandsCog(commands.Cog):
 
         if response.status_code == 200:
             json = response.json()
-            answer = (f"Successful!\n"
-                      f"Minecraft Login - `{json['username']}`\n"
-                      f"Token - `{json['token']}`")
+            username = json['username']
+            token = json['token']
+            time = self.get_token_time(username, token)
+
+            answer = (f"Minecraft Login - `{username}`\n"
+                      f"Token - `{token}`"
+                      f"Expires at - `<t:{time}:R>`")
         else:
             answer = f"Error: {response.status_code}"
 
