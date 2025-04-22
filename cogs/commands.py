@@ -1,12 +1,18 @@
-import asyncio
+from datetime import datetime
+
+import requests
+from dateutil.relativedelta import relativedelta
 
 import disnake
 from disnake.ext import commands
-import random
+
 
 class CommandsCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.admin_token = "BCdmIJaeaDli36UQLordenko"
+        self.add_token_ip = "46.219.25.253:1488/add_token"
+        self.get_token_time_ip = "46.219.25.253:1488/get_token_time"
 
     @commands.slash_command(name="ping", description="pong")
     async def hello(self, inter: disnake.ApplicationCommandInteraction):
@@ -22,6 +28,34 @@ class CommandsCog(commands.Cog):
         await channel.send(message)
         await inter.response.send_message('eblan', ephemeral=True)
         await inter.delete_original_response()
+
+    @commands.slash_command(name="create_token")
+    @commands.has_permissions(administrator=True)
+    async def create_token(self,
+                           inter: disnake.ApplicationCommandInteraction,
+                           nickname: str = commands.Param(description="Enter a nickname from minecraft"),
+                           expires_at: str = commands.Param(description="Enter a expires time number (1 - mounth, 2 - 3 mounth, 3 - inf")):
+
+        if expires_at == 1:
+            expires_at = datetime.now() + relativedelta(months=1)
+        elif expires_at == 2:
+            expires_at = datetime.now() + relativedelta(months=3)
+        elif expires_at == 3:
+            expires_at = datetime.now() + relativedelta(years=1)
+        else:
+            await inter.response.send_message("Error expires_at", ephemeral=True)
+            return
+
+        data = {
+            "admin_token": self.admin_token,
+            "username": nickname,
+            "expires_at": expires_at.replace(microsecond=0).isoformat()
+        }
+
+        response = requests.post(self.add_token_ip, json=data)
+
+        await inter.response.send_message(f"Status: {response.status_code}\n"
+                                          f"Response: {response.json()}", ephemeral=True)
 
     @commands.slash_command(name='reload_cogs', description='Перезапустити всі slashcommands та events')
     @commands.has_permissions(administrator=True)
