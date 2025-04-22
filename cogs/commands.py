@@ -79,7 +79,7 @@ class CommandsCog(commands.Cog):
 
             answer = (f"Minecraft Login - `{username}`\n"
                       f"Token - `{token}`\n"
-                      f"Expires at - `<t:{time}:R>`")
+                      f"Expires at - <t:{time}:R>")
         else:
             answer = f"Error: {response.status_code}"
 
