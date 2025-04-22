@@ -75,10 +75,10 @@ class CommandsCog(commands.Cog):
             json = response.json()
             username = json['username']
             token = json['token']
-            time = self.get_token_time(username, token)
+            time = await self.get_token_time(username, token)
 
             answer = (f"Minecraft Login - `{username}`\n"
-                      f"Token - `{token}`"
+                      f"Token - `{token}`\n"
                       f"Expires at - `<t:{time}:R>`")
         else:
             answer = f"Error: {response.status_code}"
