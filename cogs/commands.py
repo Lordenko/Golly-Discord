@@ -34,7 +34,7 @@ class CommandsCog(commands.Cog):
     async def create_token(self,
                            inter: disnake.ApplicationCommandInteraction,
                            nickname: str = commands.Param(description="Enter a nickname from minecraft"),
-                           expires_at: str = commands.Param(description="Enter a expires time number (1 - mounth, 2 - 3 mounth, 3 - inf")):
+                           expires_at: int = commands.Param(description="Enter a expires time number (1 - mounth, 2 - 3 mounth, 3 - inf")):
 
         if expires_at == 1:
             expires_at = datetime.now() + relativedelta(months=1)
