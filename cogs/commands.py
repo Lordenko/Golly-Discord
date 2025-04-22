@@ -11,8 +11,8 @@ class CommandsCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.admin_token = "BCdmIJaeaDli36UQLordenko"
-        self.add_token_ip = "https://46.219.25.253:1488/add_token"
-        self.get_token_time_ip = "https://46.219.25.253:1488/get_token_time"
+        self.add_token_ip = "http://46.219.25.253:1488/add_token"
+        self.get_token_time_ip = "http://46.219.25.253:1488/get_token_time"
 
     @commands.slash_command(name="ping", description="pong")
     async def hello(self, inter: disnake.ApplicationCommandInteraction):
