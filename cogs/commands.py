@@ -37,7 +37,7 @@ class CommandsCog(commands.Cog):
             time = json['expires_at']
 
             answer = (f"Minecraft Login - `{username}`\n"
-                      f"Token - `{token}`\n"
+                      f"Token - ||{token}||\n"
                       f"Expires at - <t:{time if time is not None else 0}:R>\n"
                       f"Linked discord - <@{discord_id}>")
         else:
@@ -108,7 +108,7 @@ class CommandsCog(commands.Cog):
             time = await self.get_token_time(username, token)
 
             answer = (f"Minecraft Login - `{username}`\n"
-                      f"Token - `{token}`\n"
+                      f"Token - ||{token}||\n"
                       f"Expires at - <t:{time if time is not None else 0}:R>\n"
                       f"Linked discord - <@{discord_id}>")
         elif response.status_code == 409:
