@@ -41,7 +41,7 @@ class CommandsCog(commands.Cog):
         elif expires_at == 2:
             expires_at = datetime.now() + relativedelta(months=3)
         elif expires_at == 3:
-            expires_at = datetime.now() + relativedelta(years=1)
+            expires_at = datetime.now() + relativedelta(years=10)
         else:
             await inter.response.send_message("Error expires_at", ephemeral=True)
             return
@@ -54,8 +54,17 @@ class CommandsCog(commands.Cog):
 
         response = requests.post(self.add_token_ip, json=data)
 
-        await inter.response.send_message(f"Status: {response.status_code}\n"
-                                          f"Response: {response.json()}", ephemeral=True)
+        answer = ''
+
+        if response.status_code == 200:
+            json = response.json()
+            answer = (f"Successful!\n"
+                      f"Minecraft Login - `{json['username']}`\n"
+                      f"Token - `{json['token']}`")
+        else:
+            answer = f"Error: {response.status_code}"
+
+        await inter.response.send_message(answer, ephemeral=True)
 
     @commands.slash_command(name='reload_cogs', description='Перезапустити всі slashcommands та events')
     @commands.has_permissions(administrator=True)
